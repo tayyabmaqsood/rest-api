@@ -12,9 +12,9 @@ app.use((req, res, next)=>{
 
     // we set header that allow domain to access the server.
     // we can add server address instead of * , i.e codepen.io
-    res.setHeader('Access-Controll-Allow-Origin', '*');
-    res.setHeader('Access-Controll-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
-    res.setHeader('Access-Controll-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     next();
 });
 
