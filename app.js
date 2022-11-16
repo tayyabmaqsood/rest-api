@@ -1,6 +1,8 @@
 const express = require('express');
 const feedRouter = require('./routes/feed')
 const bodyParser = require('body-parser');
+const path = require('path');
+
 const sequelize = require('./util/database');
 const Post = require("./models/post"); 
 
@@ -26,6 +28,17 @@ app.use((req, res, next)=>{
 // GET /feed/posts
 // every request starts with /feed, forward towards the feedRoute
 app.use('/feed', feedRouter);
+
+// adding error handling middleware
+app.use((error, req, res, next) => {
+    console.log(error)
+    const statusCode = error.statusCode || 500;
+    const message = error.message;
+    res.status(statusCode)
+        .json({
+            message: message
+        });
+});
 
 sequelize
     .sync()
