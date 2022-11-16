@@ -25,10 +25,9 @@ exports.getPost = (req, res, next)=>{
 exports.createPost = (req, res, next)=>{
     const errors = validationResult(req);
     if (!errors.isEmpty()){
-        return res.status(422).json({
-            message:'Validation failed, enter data is in correct format',
-            errors: errors.array()
-        })
+        const error= new Error('Validation failed, enter data is in correct format');
+        error.statusCode = 422;
+        throw error;
     }
     const title = req.body.title;
     const content = req.body.content;
@@ -48,7 +47,14 @@ exports.createPost = (req, res, next)=>{
                 post: result
             });
         })
-        .catch(err =>  console.log(err))
+        .catch(err =>  {
+            // we are inside the promise chain just `throw` error will not work
+            // we have to use next function to send error to next middleware
+            if (!err.statusCode){
+                err.statusCode = 500;
+            }
+            next(err);
+        })
 
 
     // creating post in database
