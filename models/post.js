@@ -9,7 +9,7 @@ const Post = sequelize.define('post',{
         primaryKey: true
     },
     title:{
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
         allowNull: false
     },
     imageUrl:{
@@ -17,11 +17,11 @@ const Post = sequelize.define('post',{
         allowNull: false
     },
     content:{
-        type: String,
+        type: Sequelize.STRING,
         allowNull:false
     },
     creator:{
-        type: String,
+        type: Sequelize.STRING,
         allowNull:false
     }
 })
