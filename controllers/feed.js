@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator/check');
 const Post = require('../models/post');
 
+
 // we can access this post by type direct url in the browser
 exports.getPost = (req, res, next)=>{
 
@@ -30,19 +31,24 @@ exports.createPost = (req, res, next)=>{
         error.statusCode = 422;
         throw error;
     }
+    if(!req.file){
+        const error= new Error("No image attached");
+        error.statusCode = 422;
+        throw error;
+    }
+    const imageUrl = req.file.path;
     const title = req.body.title;
     const content = req.body.content;
     const post = new Post({
         title:title, 
         content: content,
         creator:  'Muhammad Tayyab',
-        imageUrl: 'images/apple.jpg'
+        imageUrl: imageUrl
     })
    
     post
         .save()
         .then(result => {
-            console.log(result);
             res.status(201).json({
                 message:'POST created successfully',
                 post: result
