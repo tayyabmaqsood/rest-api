@@ -56,8 +56,30 @@ exports.createPost = (req, res, next)=>{
             next(err);
         })
 
+    // get single post based on postId
+    exports.getPost = (req, res, next)=>{
+        const postId = req.params.postId;
+        Post
+            .findByPk(postId)
+            .then(post =>{
 
-    // creating post in database
-    // 201 status code means success and resource is created
+                // if I throw error in then block, then this error catched by next catch block
+                if (!post){
+                    const error= new Error("Unable to find post.");
+                    error.statusCode = 404;
+                    throw error;
+                }
+                res.status(200).json({
+                    message:'Post Fetched',
+                    post: post
+                });
+            })
+            .catch(err =>{
+                if (!err.statusCode){
+                    err.statusCode = 500;
+                }
+                next(err);
+            })
+    }
     
 };
