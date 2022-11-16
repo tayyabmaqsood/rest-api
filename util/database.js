@@ -6,3 +6,4 @@ const sequelize = new Sequelize('rest-api', 'root', '123456',{
 });
 
 module.exports = sequelize;
+
