@@ -6,7 +6,7 @@ const router = express.Router();
 
 //  GET /feed/posts
 // show all post
-router.get('/posts', feedController.getPost);
+router.get('/posts', feedController.getAllPosts);
 
 // POST /feed/post
 // adding new post
@@ -21,6 +21,6 @@ router.post('/post',
     ],
     feedController.createPost);
 
-// GET /post/postId
-router.get('/post/:postId', feedController.getPost);
+    // GET /post/postId
+    router.get('/post/:postId', feedController.getPost);
 module.exports = router;
