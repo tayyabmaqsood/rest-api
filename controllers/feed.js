@@ -1,3 +1,5 @@
+const { validationResult } = require('express-validator/check');
+
 // we can access this post by type direct url in the browser
 exports.getPost = (req, res, next)=>{
     res.status(200).json({
@@ -20,6 +22,13 @@ exports.getPost = (req, res, next)=>{
 
 
 exports.createPost = (req, res, next)=>{
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        return res.status(422).json({
+            message:'Validation failed, enter data is in correct format',
+            errors: errors.array()
+        })
+    }
     const title = req.body.title;
     const content = req.body.content;
     // creating post in database
