@@ -110,16 +110,11 @@ exports.updatePost = (req, res, next)=>{
     if (req.file){
         imageUrl = req.file.path;
     }
-    if(!imageUrl){
-        const error= new Error("No file picked (error: updatePost)");
-        error.statusCode = 422;
-        throw error;
-    }
 
     Post.findByPk(postId)
         .then(post =>{
             if (!post){
-                const error= new Error("Unable to find post.");
+                const error= new Error("Unable to find post. (error: updatePost)");
                 error.statusCode = 404;
                 throw error;
             }
@@ -128,6 +123,9 @@ exports.updatePost = (req, res, next)=>{
                 // deleting the old image
                 clearImage(post.imageUrl);
             }
+
+            if(!imageUrl)
+                imageUrl = post.imageUrl;
 
             post.title = title;
             post.content = content;
