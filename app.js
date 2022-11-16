@@ -9,6 +9,8 @@ const app = express()
 
 app.use(bodyParser.json()); //application/json
 
+// adding  images folder as static
+app.use('/images', express.static(path.join(__dirname, 'images'))); 
 
 // every response we sent have the following headers
 app.use((req, res, next)=>{
