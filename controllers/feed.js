@@ -2,7 +2,9 @@ const { validationResult } = require('express-validator/check');
 const Post = require('../models/post');
 const fs = require('fs');
 const path = require('path');
-const { post } = require('../routes/feed');
+
+const post  = require('../routes/feed');
+const User = require('../models/user');
 
 // we can access this post by type direct url in the browser
 exports.getAllPosts = (req, res, next)=>{
@@ -49,21 +51,29 @@ exports.createPost = (req, res, next)=>{
     const imageUrl = req.file.path;
     const title = req.body.title;
     const content = req.body.content;
+    let creator, result;
     const post = new Post({
         title:title, 
         content: content,
         creator:  'Muhammad Tayyab',
-        imageUrl: imageUrl
+        imageUrl: imageUrl,
+        userId: req.userId
     })
    
     post
         .save()
         .then(result => {
-            res.status(201).json({
-                message:'POST created successfully',
-                post: result
-            });
+            result = result;
+            return User.findByPk(req.userId);
         })
+            .then(user =>{
+                creator = user;
+                res.status(201).json({
+                    message:'POST created successfully',
+                    post: result,
+                    creator: {_id: creator.id, name: creator.name}
+                });
+            })
         .catch(err =>  {
             // we are inside the promise chain just `throw` error will not work
             // we have to use next function to send error to next middleware
