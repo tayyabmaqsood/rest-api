@@ -7,32 +7,28 @@ const post  = require('../routes/feed');
 const User = require('../models/user');
 
 // we can access this post by type direct url in the browser
-exports.getAllPosts = (req, res, next)=>{
+exports.getAllPosts = async(req, res, next)=>{
 const currentPage = req.query.page || 1;
 const perPage = 2;
-let totalItems;
-Post.count()
-    .then(count =>{
-      totalItems = count;
-      return Post.findAll({
-        limit: perPage,
-        offset:((currentPage - 1) * perPage)
-      })
-      .then(posts =>{
-          res.status(200).json({
-              message:"Fetched Posts successfully", 
-              posts: posts,
-              totalItems: totalItems
-          })
-      })
-    })
-    .catch(err =>{
-        if (!err.statusCode){
-            err.statusCode = 500;
+const totalItems = await Post.count();
+    try{
+    const posts = await Post.findAll({
+            limit: perPage,
+            offset:((currentPage - 1) * perPage)
+        });
+        
+        res.status(200).json({
+            message:"Fetched Posts successfully", 
+            posts: posts,
+            totalItems: totalItems
+        });
+    }
+    catch(err){
+            if (!err.statusCode){
+                err.statusCode = 500;
+            }
+            next(err);
         }
-        next(err);
-    });
-
 };
 
 
@@ -168,39 +164,32 @@ exports.updatePost = (req, res, next)=>{
         })
 };
 
-exports.deletePost = (req, res, next)=>{
+
+exports.deletePost = async(req, res, next)=>{
 
     const postId = req.params.postId;
-    Post.findByPk(postId)
-        .then( post =>{
-            if (!post){
-                const error= new Error("Unable to find post. (error: deletepost)");
-                error.statusCode = 404;
-                throw error;
-            }
-            // check either correct user request to delete the post or not
-            if(post.userId.toString() !== req.userId){
-                const error= new Error("Not authorized (error: deletePost)");
-                error.statusCode = 403;
-                throw error;
-            }
+   try{
+        const post = await Post.findByPk(postId)
+        // check either correct user request to delete the post or not
+        if(post.userId.toString() !== req.userId){
+            const error= new Error("Not authorized (error: deletePost)");
+            error.statusCode = 403;
+            throw error;
+        }
 
-            // check loggedIn user
-            if (post.imageUrl)
-                clearImage(post.imageUrl);
-            return post.destroy();
-        })
-            .then(result =>{
-                console.log(result);
-                res.status(200).json({message:'Post deleted!', post: result})  
+        // check loggedIn user
+        if (post.imageUrl)
+            clearImage(post.imageUrl);
+        const result = await post.destroy();
+        res.status(200).json({message:'Post deleted!', post: result})  
 
-            })
-        .catch(err =>{
-            if (!err.statusCode){
-                err.statusCode = 500;
-            }
-            next(err);
-        })
+    }
+    catch(err){
+        if (!err.statusCode){
+            err.statusCode = 500;
+        }
+        next(err);
+    }
 }
 
 
