@@ -5,9 +5,13 @@ const path = require('path');
 const multer = require('multer');
 
 const sequelize = require('./util/database');
+
 const Post = require("./models/post"); 
-const feedRoutes = require('./routes/feed');
 const User = require("./models/user");
+
+const feedRoutes = require('./routes/feed');
+const authRoutes = require('./routes/auth');
+
 
 const app = express();
 
@@ -59,16 +63,20 @@ app.use((req, res, next)=>{
 
 // GET /feed/posts
 // every request starts with /feed, forward towards the feedRoute
-app.use('/feed', feedRouter);
+app.use('/feed', feedRoutes);
+app.use('/auth',authRoutes);
 
 // adding error handling middleware
 app.use((error, req, res, next) => {
     console.log(error)
     const statusCode = error.statusCode || 500;
     const message = error.message;
+    // error.data is array of error
+    const data = error.data;
     res.status(statusCode)
         .json({
-            message: message
+            message: message,
+            data: data
         });
 });
 
@@ -77,7 +85,8 @@ User.hasMany(Post);
 
 
 sequelize
-    .sync({force:true})
+    // .sync({force:true})
+    .sync()
     .then(result => {
         console.log(result)
         app.listen(8080);
