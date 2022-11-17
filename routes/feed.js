@@ -8,11 +8,11 @@ const router = express.Router();
 
 //  GET /feed/posts
 // show all post
-router.get('/posts', isAuth,feedController.getAllPosts);
+router.get('/posts', isAuth, feedController.getAllPosts);
 
 // POST /feed/post
 // adding new post
-router.post('/post', 
+router.post('/post', isAuth,
     [
         body('title')
             .trim()
@@ -24,11 +24,11 @@ router.post('/post',
     feedController.createPost);
 
     // GET /post/postId
-    router.get('/post/:postId', feedController.getPost);
+    router.get('/post/:postId', isAuth, feedController.getPost);
 
     // PUT /post/:postId 
     // used to edit post
-    router.put('/post/:postId',
+    router.put('/post/:postId', isAuth,
     [
         body('title')
             .trim()
@@ -40,5 +40,5 @@ router.post('/post',
     feedController.updatePost);
 
     // Delete /post/id
-    router.delete('/post/:postId', feedController.deletePost);
+    router.delete('/post/:postId', isAuth, feedController.deletePost);
 module.exports = router;
