@@ -2,11 +2,13 @@ const express = require('express');
 const feedController = require('../controllers/feed');
 const { body } = require('express-validator')
 
+const isAuth = require('../middleware/is-auth');
+
 const router = express.Router();
 
 //  GET /feed/posts
 // show all post
-router.get('/posts', feedController.getAllPosts);
+router.get('/posts', isAuth,feedController.getAllPosts);
 
 // POST /feed/post
 // adding new post
