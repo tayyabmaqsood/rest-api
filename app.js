@@ -7,6 +7,7 @@ const multer = require('multer');
 const sequelize = require('./util/database');
 const Post = require("./models/post"); 
 const feedRoutes = require('./routes/feed');
+const User = require("./models/user");
 
 const app = express();
 
@@ -71,8 +72,12 @@ app.use((error, req, res, next) => {
         });
 });
 
+Post.belongsTo(User, {constraints: true, onDelete:'CASCADE'});
+User.hasMany(Post);
+
+
 sequelize
-    .sync()
+    .sync({force:true})
     .then(result => {
         console.log(result)
         app.listen(8080);
