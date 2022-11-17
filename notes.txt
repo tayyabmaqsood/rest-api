@@ -1,0 +1,2 @@
+In order to auth user on server side, we use JWT (Json web token). Whenever we try to login if use enter correct password then JSON web token will came into work
+	npm install --save jsonwebtoken
